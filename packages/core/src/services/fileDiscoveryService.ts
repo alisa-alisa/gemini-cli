@@ -5,15 +5,20 @@
  */
 
 import type { GitIgnoreFilter } from '../utils/gitIgnoreParser.js';
-import type { GeminiIgnoreFilter } from '../utils/geminiIgnoreParser.js';
+import type { FileIgnoreFilter } from '../utils/geminiIgnoreParser.js';
 import { GitIgnoreParser } from '../utils/gitIgnoreParser.js';
-import { GeminiIgnoreParser } from '../utils/geminiIgnoreParser.js';
+import { FileIgnoreParser } from '../utils/geminiIgnoreParser.js';
 import { isGitRepository } from '../utils/gitUtils.js';
 import * as path from 'node:path';
 
 export interface FilterFilesOptions {
   respectGitIgnore?: boolean;
   respectGeminiIgnore?: boolean;
+}
+
+export interface FileDiscoveryServiceOptions {
+  projectRoot: string;
+  ignoreFileName?: string;
 }
 
 export interface FilterReport {
@@ -23,23 +28,34 @@ export interface FilterReport {
 
 export class FileDiscoveryService {
   private gitIgnoreFilter: GitIgnoreFilter | null = null;
-  private geminiIgnoreFilter: GeminiIgnoreFilter | null = null;
+  private geminiIgnoreFilter: FileIgnoreFilter | null = null;
+  private customIgnoreFilter: FileIgnoreFilter | null = null;
   private combinedIgnoreFilter: GitIgnoreFilter | null = null;
   private projectRoot: string;
 
-  constructor(projectRoot: string) {
+  constructor(options: FileDiscoveryServiceOptions) {
+    const { projectRoot, ignoreFileName } = options;
     this.projectRoot = path.resolve(projectRoot);
     if (isGitRepository(this.projectRoot)) {
       this.gitIgnoreFilter = new GitIgnoreParser(this.projectRoot);
     }
-    this.geminiIgnoreFilter = new GeminiIgnoreParser(this.projectRoot);
+    this.geminiIgnoreFilter = new FileIgnoreParser(this.projectRoot);
+    if (ignoreFileName) {
+      this.customIgnoreFilter = new FileIgnoreParser(
+        this.projectRoot,
+        ignoreFileName,
+      );
+    }
 
     if (this.gitIgnoreFilter) {
-      const geminiPatterns = this.geminiIgnoreFilter.getPatterns();
-      // Create combined parser: .gitignore + .geminiignore
+      const additionalPatterns = [
+        ...this.geminiIgnoreFilter.getPatterns(),
+        ...(this.customIgnoreFilter?.getPatterns() ?? []),
+      ];
+      // Create combined parser: .gitignore + .geminiignore + custom ignore
       this.combinedIgnoreFilter = new GitIgnoreParser(
         this.projectRoot,
-        geminiPatterns,
+        additionalPatterns,
       );
     }
   }
@@ -55,6 +71,7 @@ export class FileDiscoveryService {
         respectGeminiIgnore &&
         this.combinedIgnoreFilter
       ) {
+        // we always respect custom ignore that's why no additional flag here
         return !this.combinedIgnoreFilter.isIgnored(filePath);
       }
 
@@ -62,6 +79,9 @@ export class FileDiscoveryService {
         return false;
       }
       if (respectGeminiIgnore && this.geminiIgnoreFilter?.isIgnored(filePath)) {
+        return false;
+      }
+      if (this.customIgnoreFilter?.isIgnored(filePath)) {
         return false;
       }
       return true;

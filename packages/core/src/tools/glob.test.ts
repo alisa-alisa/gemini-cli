@@ -26,7 +26,8 @@ describe('GlobTool', () => {
 
   // Mock config for testing
   const mockConfig = {
-    getFileService: () => new FileDiscoveryService(tempRootDir),
+    getFileService: () =>
+      new FileDiscoveryService({ projectRoot: tempRootDir }),
     getFileFilteringRespectGitIgnore: () => true,
     getFileFilteringOptions: () => ({
       respectGitIgnore: true,

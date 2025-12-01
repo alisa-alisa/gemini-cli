@@ -211,7 +211,7 @@ describe('Gemini Client (client.ts)', () => {
       getFunctionDeclarations: vi.fn().mockReturnValue([]),
       getTool: vi.fn().mockReturnValue(null),
     };
-    const fileService = new FileDiscoveryService('/test/dir');
+    const fileService = new FileDiscoveryService({ projectRoot: '/test/dir' });
     const contentGeneratorConfig: ContentGeneratorConfig = {
       apiKey: 'test-key',
       vertexai: false,

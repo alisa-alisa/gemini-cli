@@ -66,13 +66,15 @@ export async function loadConfig(
       respectGitIgnore: settings.fileFiltering?.respectGitIgnore,
       enableRecursiveFileSearch:
         settings.fileFiltering?.enableRecursiveFileSearch,
+      customIgnoreFileName:
+        process.env['GEMINI_CUSTOM_IGNORE_FILE_NAME'] ?? undefined,
     },
     ideMode: false,
     folderTrust: settings.folderTrust === true,
     extensionLoader,
   };
 
-  const fileService = new FileDiscoveryService(workspaceDir);
+  const fileService = new FileDiscoveryService({ projectRoot: workspaceDir });
   const { memoryContent, fileCount } = await loadServerHierarchicalMemory(
     workspaceDir,
     [workspaceDir],

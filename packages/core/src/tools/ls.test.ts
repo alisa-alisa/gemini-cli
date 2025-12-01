@@ -32,7 +32,8 @@ describe('LSTool', () => {
       getTargetDir: () => tempRootDir,
       getWorkspaceContext: () =>
         new WorkspaceContext(tempRootDir, [tempSecondaryDir]),
-      getFileService: () => new FileDiscoveryService(tempRootDir),
+      getFileService: () =>
+        new FileDiscoveryService({ projectRoot: tempRootDir }),
       getFileFilteringOptions: () => ({
         respectGitIgnore: true,
         respectGeminiIgnore: true,

@@ -183,6 +183,32 @@ describe('FileExclusions', () => {
     });
   });
 
+  describe('getCustomIgnoreFile', () => {
+    it('should return the custom ignore file from the config', () => {
+      const mockConfig = {
+        getCustomIgnoreFile: vi.fn(() => '.my-custom-ignore'),
+      } as unknown as Config;
+      const excluder = new FileExclusions(mockConfig);
+
+      expect(excluder.getCustomIgnoreFile()).toBe('.my-custom-ignore');
+      expect(mockConfig.getCustomIgnoreFile).toHaveBeenCalled();
+    });
+
+    it('should return undefined if the config does not have a custom ignore file', () => {
+      const mockConfig = {
+        getCustomIgnoreFile: vi.fn(() => undefined),
+      } as unknown as Config;
+      const excluder = new FileExclusions(mockConfig);
+
+      expect(excluder.getCustomIgnoreFile()).toBeUndefined();
+    });
+
+    it('should return undefined if no config is provided', () => {
+      const excluder = new FileExclusions(); // No config
+      expect(excluder.getCustomIgnoreFile()).toBeUndefined();
+    });
+  });
+
   describe('buildExcludePatterns', () => {
     it('should be an alias for getDefaultExcludePatterns', () => {
       const excluder = new FileExclusions();

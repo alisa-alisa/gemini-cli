@@ -212,6 +212,10 @@ export class FileExclusions {
   buildExcludePatterns(options: ExcludeOptions): string[] {
     return this.getDefaultExcludePatterns(options);
   }
+
+  getCustomIgnoreFile(): string | undefined {
+    return this.config?.getCustomIgnoreFile();
+  }
 }
 
 /**

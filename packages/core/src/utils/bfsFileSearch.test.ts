@@ -124,7 +124,7 @@ describe('bfsFileSearch', () => {
         'target.txt',
       );
 
-      const fileService = new FileDiscoveryService(projectRoot);
+      const fileService = new FileDiscoveryService({ projectRoot });
       const result = await bfsFileSearch(projectRoot, {
         fileName: 'target.txt',
         fileService,
@@ -147,7 +147,7 @@ describe('bfsFileSearch', () => {
         'target.txt',
       );
 
-      const fileService = new FileDiscoveryService(projectRoot);
+      const fileService = new FileDiscoveryService({ projectRoot });
       const result = await bfsFileSearch(projectRoot, {
         fileName: 'target.txt',
         fileService,
@@ -176,7 +176,7 @@ describe('bfsFileSearch', () => {
         'target.txt',
       );
 
-      const fileService = new FileDiscoveryService(projectRoot);
+      const fileService = new FileDiscoveryService({ projectRoot });
       const result = await bfsFileSearch(projectRoot, {
         fileName: 'target.txt',
         fileService,

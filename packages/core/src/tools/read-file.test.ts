@@ -34,7 +34,8 @@ describe('ReadFileTool', () => {
     tempRootDir = await fsp.mkdtemp(path.join(realTmp, 'read-file-tool-root-'));
 
     const mockConfigInstance = {
-      getFileService: () => new FileDiscoveryService(tempRootDir),
+      getFileService: () =>
+        new FileDiscoveryService({ projectRoot: tempRootDir }),
       getFileSystemService: () => new StandardFileSystemService(),
       getTargetDir: () => tempRootDir,
       getWorkspaceContext: () => createMockWorkspaceContext(tempRootDir),
@@ -482,7 +483,8 @@ describe('ReadFileTool', () => {
           ['foo.*', 'ignored/'].join('\n'),
         );
         const mockConfigInstance = {
-          getFileService: () => new FileDiscoveryService(tempRootDir),
+          getFileService: () =>
+            new FileDiscoveryService({ projectRoot: tempRootDir }),
           getFileSystemService: () => new StandardFileSystemService(),
           getTargetDir: () => tempRootDir,
           getWorkspaceContext: () => new WorkspaceContext(tempRootDir),

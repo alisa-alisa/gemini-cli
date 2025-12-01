@@ -96,7 +96,7 @@ describe('memoryDiscovery', () => {
         cwd,
         [],
         false,
-        new FileDiscoveryService(projectRoot),
+        new FileDiscoveryService({ projectRoot }),
         new SimpleExtensionLoader([]),
         false, // untrusted
       );
@@ -125,7 +125,7 @@ describe('memoryDiscovery', () => {
           cwd,
           [],
           false,
-          new FileDiscoveryService(projectRoot),
+          new FileDiscoveryService({ projectRoot }),
           new SimpleExtensionLoader([]),
           false, // untrusted
         );
@@ -141,7 +141,7 @@ describe('memoryDiscovery', () => {
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -163,7 +163,7 @@ describe('memoryDiscovery', () => {
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -190,7 +190,7 @@ default context content
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -221,7 +221,7 @@ custom context content
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -256,7 +256,7 @@ cwd context content
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -288,7 +288,7 @@ Subdir custom memory
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -320,7 +320,7 @@ Src directory memory
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -364,7 +364,7 @@ Subdir memory
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -417,7 +417,7 @@ Subdir memory
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
       'tree',
@@ -453,7 +453,7 @@ My code memory
       cwd,
       [],
       true,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
       'tree', // importFormat
@@ -475,7 +475,7 @@ My code memory
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -497,7 +497,7 @@ My code memory
       cwd,
       [],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([
         {
           contextFiles: [extensionFilePath],
@@ -529,7 +529,7 @@ Extension memory content
       cwd,
       [includedDir],
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -564,7 +564,7 @@ included directory memory
       cwd,
       createdFiles.map((f) => path.dirname(f)),
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );
@@ -599,7 +599,7 @@ included directory memory
       parentDir,
       [childDir, parentDir], // Deliberately include duplicates
       false,
-      new FileDiscoveryService(projectRoot),
+      new FileDiscoveryService({ projectRoot }),
       new SimpleExtensionLoader([]),
       DEFAULT_FOLDER_TRUST,
     );

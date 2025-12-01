@@ -4,67 +4,67 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { GeminiIgnoreParser } from './geminiIgnoreParser.js';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
 import * as os from 'node:os';
+import * as path from 'node:path';
+import { FileIgnoreParser } from './geminiIgnoreParser.js';
 
-describe('GeminiIgnoreParser', () => {
+describe('FileIgnoreParser', () => {
+  let testRootDir: string;
   let projectRoot: string;
 
   async function createTestFile(filePath: string, content = '') {
     const fullPath = path.join(projectRoot, filePath);
     await fs.mkdir(path.dirname(fullPath), { recursive: true });
     await fs.writeFile(fullPath, content);
+    return fullPath;
   }
 
   beforeEach(async () => {
-    projectRoot = await fs.mkdtemp(
-      path.join(os.tmpdir(), 'geminiignore-test-'),
+    testRootDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), 'file-ignore-parser-test-'),
     );
+    projectRoot = path.join(testRootDir, 'project');
+    await fs.mkdir(projectRoot, { recursive: true });
   });
 
   afterEach(async () => {
-    await fs.rm(projectRoot, { recursive: true, force: true });
-    vi.restoreAllMocks();
+    await fs.rm(testRootDir, { recursive: true, force: true });
   });
 
-  describe('when .geminiignore exists', () => {
-    beforeEach(async () => {
-      await createTestFile(
-        '.geminiignore',
-        'ignored.txt\n# A comment\n/ignored_dir/\n',
-      );
-      await createTestFile('ignored.txt', 'ignored');
-      await createTestFile('not_ignored.txt', 'not ignored');
-      await createTestFile(
-        path.join('ignored_dir', 'file.txt'),
-        'in ignored dir',
-      );
-      await createTestFile(
-        path.join('subdir', 'not_ignored.txt'),
-        'not ignored',
-      );
+  describe('constructor', () => {
+    it('should use default .geminiignore when ignoreFileName is not provided', async () => {
+      await createTestFile('.geminiignore', '*.log\n/build');
+      const parser = new FileIgnoreParser(projectRoot);
+
+      expect(parser.isIgnored('debug.log')).toBe(true);
+      expect(parser.isIgnored('build/app.js')).toBe(true);
+      expect(parser.isIgnored('src/index.js')).toBe(false);
     });
 
-    it('should ignore files specified in .geminiignore', () => {
-      const parser = new GeminiIgnoreParser(projectRoot);
-      expect(parser.getPatterns()).toEqual(['ignored.txt', '/ignored_dir/']);
-      expect(parser.isIgnored('ignored.txt')).toBe(true);
-      expect(parser.isIgnored('not_ignored.txt')).toBe(false);
-      expect(parser.isIgnored(path.join('ignored_dir', 'file.txt'))).toBe(true);
-      expect(parser.isIgnored(path.join('subdir', 'not_ignored.txt'))).toBe(
-        false,
-      );
-    });
-  });
+    it('should use the specified ignoreFileName when provided', async () => {
+      const customIgnoreFile = '.my-ignore';
+      await createTestFile(customIgnoreFile, 'temp/\ndocs/');
+      const parser = new FileIgnoreParser(projectRoot, customIgnoreFile);
 
-  describe('when .geminiignore does not exist', () => {
-    it('should not load any patterns and not ignore any files', () => {
-      const parser = new GeminiIgnoreParser(projectRoot);
-      expect(parser.getPatterns()).toEqual([]);
-      expect(parser.isIgnored('any_file.txt')).toBe(false);
+      expect(parser.isIgnored('temp/file.tmp')).toBe(true);
+      expect(parser.isIgnored('docs/guide.md')).toBe(true);
+      expect(parser.isIgnored('src/index.js')).toBe(false);
+    });
+
+    it('should not use .geminiignore when a custom ignoreFileName is provided', async () => {
+      const customIgnoreFile = '.my-ignore';
+      await createTestFile('.geminiignore', '*.log');
+      await createTestFile(customIgnoreFile, 'temp/');
+
+      const parser = new FileIgnoreParser(projectRoot, customIgnoreFile);
+
+      // Should respect the custom file
+      expect(parser.isIgnored('temp/file.tmp')).toBe(true);
+
+      // Should NOT respect the default .geminiignore file
+      expect(parser.isIgnored('debug.log')).toBe(false);
     });
   });
 });

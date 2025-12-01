@@ -224,7 +224,6 @@ export interface ConfigParameters {
   targetDir: string;
   debugMode: boolean;
   question?: string;
-
   coreTools?: string[];
   allowedTools?: string[];
   excludeTools?: string[];
@@ -246,6 +245,7 @@ export interface ConfigParameters {
     respectGeminiIgnore?: boolean;
     enableRecursiveFileSearch?: boolean;
     disableFuzzySearch?: boolean;
+    customIgnoreFileName?: string;
   };
   checkpointing?: boolean;
   proxy?: string;
@@ -325,7 +325,6 @@ export class Config {
   private workspaceContext: WorkspaceContext;
   private readonly debugMode: boolean;
   private readonly question: string | undefined;
-
   private readonly coreTools: string[] | undefined;
   private readonly allowedTools: string[] | undefined;
   private readonly excludeTools: string[] | undefined;
@@ -349,6 +348,7 @@ export class Config {
     respectGeminiIgnore: boolean;
     enableRecursiveFileSearch: boolean;
     disableFuzzySearch: boolean;
+    customIgnoreFileName: string | undefined;
   };
   private fileDiscoveryService: FileDiscoveryService | null = null;
   private gitService: GitService | undefined = undefined;
@@ -468,6 +468,7 @@ export class Config {
       enableRecursiveFileSearch:
         params.fileFiltering?.enableRecursiveFileSearch ?? true,
       disableFuzzySearch: params.fileFiltering?.disableFuzzySearch ?? false,
+      customIgnoreFileName: params.fileFiltering?.customIgnoreFileName,
     };
     this.checkpointing = params.checkpointing ?? false;
     this.proxy = params.proxy;
@@ -1016,6 +1017,10 @@ export class Config {
     return [];
   }
 
+  getCustomIgnoreFile(): string | undefined {
+    return this.fileFiltering.customIgnoreFileName;
+  }
+
   getCheckpointingEnabled(): boolean {
     return this.checkpointing;
   }
@@ -1034,7 +1039,10 @@ export class Config {
 
   getFileService(): FileDiscoveryService {
     if (!this.fileDiscoveryService) {
-      this.fileDiscoveryService = new FileDiscoveryService(this.targetDir);
+      this.fileDiscoveryService = new FileDiscoveryService({
+        projectRoot: this.targetDir,
+        ignoreFileName: this.fileExclusions.getCustomIgnoreFile(),
+      });
     }
     return this.fileDiscoveryService;
   }

@@ -394,7 +394,7 @@ export async function loadCliConfig(
     setServerGeminiMdFilename(getCurrentGeminiMdFilename());
   }
 
-  const fileService = new FileDiscoveryService(cwd);
+  const fileService = new FileDiscoveryService({ projectRoot: cwd });
 
   const memoryFileFiltering = {
     ...DEFAULT_MEMORY_FILE_FILTERING_OPTIONS,

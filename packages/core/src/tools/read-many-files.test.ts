@@ -69,7 +69,7 @@ describe('ReadManyFilesTool', () => {
       fs.mkdtempSync(path.join(os.tmpdir(), 'read-many-files-external-')),
     );
     fs.writeFileSync(path.join(tempRootDir, '.geminiignore'), 'foo.*');
-    const fileService = new FileDiscoveryService(tempRootDir);
+    const fileService = new FileDiscoveryService({ projectRoot: tempRootDir });
     const mockConfig = {
       getFileService: () => fileService,
       getFileSystemService: () => new StandardFileSystemService(),
@@ -87,6 +87,7 @@ describe('ReadManyFilesTool', () => {
         getGlobExcludes: () => COMMON_IGNORE_PATTERNS,
         buildExcludePatterns: () => DEFAULT_FILE_EXCLUDES,
         getReadManyFilesExcludes: () => DEFAULT_FILE_EXCLUDES,
+        getCustomIgnoreFile: () => undefined,
       }),
       isInteractive: () => false,
     } as Partial<Config> as Config;
@@ -486,7 +487,7 @@ describe('ReadManyFilesTool', () => {
       const tempDir2 = fs.realpathSync(
         fs.mkdtempSync(path.join(os.tmpdir(), 'multi-dir-2-')),
       );
-      const fileService = new FileDiscoveryService(tempDir1);
+      const fileService = new FileDiscoveryService({ projectRoot: tempDir1 });
       const mockConfig = {
         getFileService: () => fileService,
         getFileSystemService: () => new StandardFileSystemService(),
@@ -502,6 +503,7 @@ describe('ReadManyFilesTool', () => {
           getGlobExcludes: () => COMMON_IGNORE_PATTERNS,
           buildExcludePatterns: () => [],
           getReadManyFilesExcludes: () => [],
+          getCustomIgnoreFile: () => undefined,
         }),
         isInteractive: () => false,
       } as Partial<Config> as Config;

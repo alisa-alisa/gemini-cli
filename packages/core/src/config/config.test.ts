@@ -160,6 +160,8 @@ vi.mock('../utils/fetch.js', () => ({
 import { BaseLlmClient } from '../core/baseLlmClient.js';
 import { tokenLimit } from '../core/tokenLimits.js';
 import { uiTelemetryService } from '../telemetry/index.js';
+import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
+import type { FileIgnoreParser } from '../utils/geminiIgnoreParser.js';
 
 vi.mock('../core/baseLlmClient.js');
 vi.mock('../core/tokenLimits.js', () => ({
@@ -503,6 +505,39 @@ describe('Server Config (config.ts)', () => {
     const config = new Config(baseParams);
     const fileService = config.getFileService();
     expect(fileService).toBeDefined();
+  });
+
+  describe('getFileService', () => {
+    it('should create and return a FileDiscoveryService instance', () => {
+      const config = new Config(baseParams);
+      const fileService = config.getFileService();
+      expect(fileService).toBeInstanceOf(FileDiscoveryService);
+    });
+
+    it('should cache the FileDiscoveryService instance on subsequent calls', () => {
+      const config = new Config(baseParams);
+      const fileService1 = config.getFileService();
+      const fileService2 = config.getFileService();
+      expect(fileService1).toBe(fileService2);
+    });
+
+    it('should pass projectRoot and ignoreFileName to FileDiscoveryService constructor', () => {
+      const customIgnoreFile = '.my-custom-ignore';
+      const params = {
+        ...baseParams,
+        fileFiltering: { customIgnoreFileName: customIgnoreFile },
+      };
+      const config = new Config(params);
+
+      const discoverService = config.getFileService();
+
+      expect(discoverService['projectRoot']).toBe(config.getTargetDir());
+      expect(
+        (discoverService['customIgnoreFilter'] as FileIgnoreParser)[
+          'ignoreFileName'
+        ],
+      ).toBe(customIgnoreFile);
+    });
   });
 
   describe('Usage Statistics', () => {

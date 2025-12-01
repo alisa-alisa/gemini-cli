@@ -8,23 +8,25 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import ignore from 'ignore';
 
-export interface GeminiIgnoreFilter {
+export interface FileIgnoreFilter {
   isIgnored(filePath: string): boolean;
   getPatterns(): string[];
 }
 
-export class GeminiIgnoreParser implements GeminiIgnoreFilter {
+export class FileIgnoreParser implements FileIgnoreFilter {
   private projectRoot: string;
+  private ignoreFileName: string;
   private patterns: string[] = [];
   private ig = ignore();
 
-  constructor(projectRoot: string) {
+  constructor(projectRoot: string, ignoreFileName = '.geminiignore') {
     this.projectRoot = path.resolve(projectRoot);
+    this.ignoreFileName = ignoreFileName;
     this.loadPatterns();
   }
 
   private loadPatterns(): void {
-    const patternsFilePath = path.join(this.projectRoot, '.geminiignore');
+    const patternsFilePath = path.join(this.projectRoot, this.ignoreFileName);
     let content: string;
     try {
       content = fs.readFileSync(patternsFilePath, 'utf-8');

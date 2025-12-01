@@ -259,7 +259,9 @@ ${testRootDir}${path.sep}
       await createTestFile(GEMINI_DIR, 'config.yaml');
       await createTestFile(GEMINI_DIR, 'logs.json');
 
-      const fileService = new FileDiscoveryService(testRootDir);
+      const fileService = new FileDiscoveryService({
+        projectRoot: testRootDir,
+      });
       const structure = await getFolderStructure(testRootDir, {
         fileService,
       });
@@ -279,7 +281,9 @@ ${testRootDir}${path.sep}
       await createTestFile('file1.txt');
       await createTestFile('ignored.txt');
 
-      const fileService = new FileDiscoveryService(testRootDir);
+      const fileService = new FileDiscoveryService({
+        projectRoot: testRootDir,
+      });
       const structure = await getFolderStructure(testRootDir, {
         fileService,
         fileFilteringOptions: {
@@ -305,7 +309,9 @@ ${testRootDir}${path.sep}
       await createTestFile(GEMINI_DIR, 'config.yaml');
       await createTestFile(GEMINI_DIR, 'logs.json');
 
-      const fileService = new FileDiscoveryService(testRootDir);
+      const fileService = new FileDiscoveryService({
+        projectRoot: testRootDir,
+      });
       const structure = await getFolderStructure(testRootDir, {
         fileService,
       });
@@ -325,7 +331,9 @@ ${testRootDir}${path.sep}
       await createTestFile(GEMINI_DIR, 'config.yaml');
       await createTestFile(GEMINI_DIR, 'logs.json');
 
-      const fileService = new FileDiscoveryService(testRootDir);
+      const fileService = new FileDiscoveryService({
+        projectRoot: testRootDir,
+      });
       const structure = await getFolderStructure(testRootDir, {
         fileService,
         fileFilteringOptions: {
