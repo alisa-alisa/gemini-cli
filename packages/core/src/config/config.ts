@@ -287,6 +287,7 @@ export interface ConfigParameters {
     respectGeminiIgnore?: boolean;
     enableRecursiveFileSearch?: boolean;
     disableFuzzySearch?: boolean;
+    customIgnoreFilePath?: string;
   };
   checkpointing?: boolean;
   proxy?: string;
@@ -408,6 +409,7 @@ export class Config {
     respectGeminiIgnore: boolean;
     enableRecursiveFileSearch: boolean;
     disableFuzzySearch: boolean;
+    customIgnoreFilePath: string | undefined;
   };
   private fileDiscoveryService: FileDiscoveryService | null = null;
   private gitService: GitService | undefined = undefined;
@@ -550,6 +552,8 @@ export class Config {
       enableRecursiveFileSearch:
         params.fileFiltering?.enableRecursiveFileSearch ?? true,
       disableFuzzySearch: params.fileFiltering?.disableFuzzySearch ?? false,
+      customIgnoreFilePath:
+        params.fileFiltering?.customIgnoreFilePath ?? undefined,
     };
     this.checkpointing = params.checkpointing ?? false;
     this.proxy = params.proxy;
@@ -1321,14 +1325,20 @@ export class Config {
   getFileFilteringRespectGitIgnore(): boolean {
     return this.fileFiltering.respectGitIgnore;
   }
+
   getFileFilteringRespectGeminiIgnore(): boolean {
     return this.fileFiltering.respectGeminiIgnore;
+  }
+
+  getCustomIgnoreFilePath(): string | undefined {
+    return this.fileFiltering.customIgnoreFilePath;
   }
 
   getFileFilteringOptions(): FileFilteringOptions {
     return {
       respectGitIgnore: this.fileFiltering.respectGitIgnore,
       respectGeminiIgnore: this.fileFiltering.respectGeminiIgnore,
+      customIgnoreFilePath: this.fileFiltering.customIgnoreFilePath,
     };
   }
 
